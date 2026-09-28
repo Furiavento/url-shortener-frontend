@@ -7,8 +7,12 @@ RUN npm ci
 COPY . .
 # Origin of the API, e.g. https://s.furiavento.cloud. Baked into the browser bundle.
 ARG API_BASE_URL
-RUN test -n "$API_BASE_URL" || (echo "Missing build arg API_BASE_URL" && exit 1)
-RUN npx ng build --define "NG_API_BASE_URL='\"${API_BASE_URL}\"'"
+RUN case "$API_BASE_URL" in \
+      http://*|https://*) ;; \
+      *) echo "Build arg API_BASE_URL must be an http(s) origin without quotes, got: '$API_BASE_URL'" && exit 1 ;; \
+    esac
+# --define takes a JavaScript expression, so the value must be a double-quoted string literal.
+RUN npx ng build --define "NG_API_BASE_URL=\"${API_BASE_URL}\""
 
 FROM node:24-alpine AS runtime
 # tini forwards SIGTERM so the container stops right away on redeploys.
