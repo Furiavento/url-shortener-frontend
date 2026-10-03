@@ -1,23 +1,17 @@
 import { Component, computed, input } from '@angular/core';
-import { ChartModule } from 'primeng/chart';
 import { Breakdown } from '../core/api.models';
+import { Chart } from './chart';
 import { CHART_GRID, CHART_PRIMARY } from './chart-theme';
 
 /** Horizontal bar chart for a top-10 breakdown, with the same data as a screen-reader table. */
 @Component({
   selector: 'app-breakdown-chart',
-  imports: [ChartModule],
+  imports: [Chart],
   template: `
     <h3 class="mb-3 font-semibold">{{ title() }}</h3>
     @if (items().length) {
       <div class="h-64">
-        <p-chart
-          type="bar"
-          height="100%"
-          [data]="data()"
-          [options]="options"
-          [ariaLabel]="title()"
-        />
+        <app-chart type="bar" [data]="data()" [options]="options" [ariaLabel]="title()" />
       </div>
       <table class="sr-only">
         <caption>
@@ -41,7 +35,7 @@ import { CHART_GRID, CHART_PRIMARY } from './chart-theme';
         </tbody>
       </table>
     } @else {
-      <p class="text-surface-700">Sin datos en este periodo.</p>
+      <p class="text-on-surface-variant">Sin datos en este periodo.</p>
     }
   `,
 })

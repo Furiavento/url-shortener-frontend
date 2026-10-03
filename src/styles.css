@@ -1,7 +1,12 @@
 @import 'tailwindcss';
-@plugin 'tailwindcss-primeui';
 
-html,
-body {
-  @apply min-h-full bg-surface-50 text-surface-900;
+/* Material's system tokens (see material-theme.scss) as Tailwind colors. */
+@theme inline {
+  --color-surface: var(--mat-sys-surface);
+  --color-on-surface: var(--mat-sys-on-surface);
+  --color-on-surface-variant: var(--mat-sys-on-surface-variant);
+  --color-primary: var(--mat-sys-primary);
+  --color-outline-variant: var(--mat-sys-outline-variant);
+  --color-error-container: var(--mat-sys-error-container);
+  --color-on-error-container: var(--mat-sys-on-error-container);
 }

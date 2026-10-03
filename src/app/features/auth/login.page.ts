@@ -1,14 +1,16 @@
 import { Component, inject, input, signal } from '@angular/core';
 import { FormField, FormRoot, email, form, maxLength, required } from '@angular/forms/signals';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { MessageModule } from 'primeng/message';
-import { PasswordModule } from 'primeng/password';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
 import { errorMessage } from '../../core/http-errors';
-import { FieldErrors } from '../../shared/field-errors';
+import { ErrorMessage } from '../../shared/error-message';
 import { safeReturnUrl } from '../../shared/safe-return-url';
 
 @Component({
@@ -17,61 +19,84 @@ import { safeReturnUrl } from '../../shared/safe-return-url';
     FormRoot,
     FormField,
     RouterLink,
-    ButtonModule,
-    InputTextModule,
-    MessageModule,
-    PasswordModule,
-    FieldErrors,
+    MatButton,
+    MatIconButton,
+    MatCard,
+    MatCardContent,
+    MatError,
+    MatFormField,
+    MatLabel,
+    MatSuffix,
+    MatIcon,
+    MatInput,
+    MatProgressSpinner,
+    ErrorMessage,
   ],
   template: `
     <main class="flex min-h-screen items-center justify-center p-4">
-      <div class="w-full max-w-md rounded-xl bg-surface-0 p-8 shadow-sm">
-        <h1 class="mb-6 text-2xl font-semibold">Iniciar sesión</h1>
+      <mat-card appearance="outlined" class="w-full max-w-md">
+        <mat-card-content class="!p-8">
+          <h1 class="mb-6 text-2xl font-medium">Iniciar sesión</h1>
 
-        <form [formRoot]="loginForm" class="flex flex-col gap-5">
-          @if (serverError(); as serverError) {
-            <p-message severity="error">{{ serverError }}</p-message>
-          }
+          <form [formRoot]="loginForm" class="flex flex-col gap-4">
+            @if (serverError(); as serverError) {
+              <app-error-message>{{ serverError }}</app-error-message>
+            }
 
-          <div class="flex flex-col gap-2">
-            <label for="email" class="font-medium">Email</label>
-            <input
-              pInputText
-              id="email"
-              type="email"
-              autocomplete="email"
-              aria-describedby="email-error"
-              [formField]="loginForm.email"
-            />
-            <app-field-errors id="email-error" [state]="loginForm.email()" />
-          </div>
+            <mat-form-field>
+              <mat-label>Email</mat-label>
+              <input
+                matInput
+                id="email"
+                type="email"
+                autocomplete="email"
+                [formField]="loginForm.email"
+              />
+              <mat-error>{{ loginForm.email().errors()[0]?.message }}</mat-error>
+            </mat-form-field>
 
-          <div class="flex flex-col gap-2">
-            <label for="password" class="font-medium">Contraseña</label>
-            <p-password
-              inputId="password"
-              autocomplete="current-password"
-              [feedback]="false"
-              [toggleMask]="true"
-              [fluid]="true"
-              [formField]="loginForm.password"
-            />
-            <app-field-errors [state]="loginForm.password()" />
-          </div>
+            <mat-form-field>
+              <mat-label>Contraseña</mat-label>
+              <input
+                matInput
+                id="password"
+                autocomplete="current-password"
+                [type]="showPassword() ? 'text' : 'password'"
+                [formField]="loginForm.password"
+              />
+              <button
+                matIconButton
+                matSuffix
+                type="button"
+                aria-label="Mostrar contraseña"
+                [attr.aria-pressed]="showPassword()"
+                (click)="showPassword.set(!showPassword())"
+              >
+                <mat-icon aria-hidden="true">{{
+                  showPassword() ? 'visibility_off' : 'visibility'
+                }}</mat-icon>
+              </button>
+              <mat-error>{{ loginForm.password().errors()[0]?.message }}</mat-error>
+            </mat-form-field>
 
-          <p-button
-            type="submit"
-            label="Entrar"
-            [loading]="loginForm().submitting()"
-            [fluid]="true"
-          />
-        </form>
+            <button
+              matButton="filled"
+              type="submit"
+              class="w-full"
+              [disabled]="loginForm().submitting()"
+              [showProgress]="loginForm().submitting()"
+            >
+              <mat-spinner progressIndicator diameter="20" aria-label="Entrando" />
+              Entrar
+            </button>
+          </form>
 
-        <p class="mt-6 text-sm text-surface-700">
-          ¿No tienes cuenta?
-          <a routerLink="/register" class="font-medium text-primary-700 underline">Regístrate</a>
-        </p>
-      </div>
+          <p class="mt-6 text-sm text-on-surface-variant">
+            ¿No tienes cuenta?
+            <a routerLink="/register" class="font-medium text-primary underline">Regístrate</a>
+          </p>
+        </mat-card-content>
+      </mat-card>
     </main>
   `,
 })
@@ -81,6 +106,7 @@ export class LoginPage {
 
   readonly returnUrl = input<string>();
 
+  protected readonly showPassword = signal(false);
   protected readonly serverError = signal<string | null>(null);
   protected readonly loginForm = form(
     signal({ email: '', password: '' }),

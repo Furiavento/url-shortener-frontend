@@ -1,21 +1,15 @@
 import { Component, computed, input } from '@angular/core';
-import { ChartModule } from 'primeng/chart';
 import { DailyClicks } from '../core/api.models';
+import { Chart } from './chart';
 import { CHART_GRID, CHART_PRIMARY, CHART_PRIMARY_FILL } from './chart-theme';
 
 /** Line chart of clicks per UTC day, with the same data as a screen-reader table. */
 @Component({
   selector: 'app-clicks-chart',
-  imports: [ChartModule],
+  imports: [Chart],
   template: `
     <div class="h-72">
-      <p-chart
-        type="line"
-        height="100%"
-        [data]="data()"
-        [options]="options"
-        [ariaLabel]="label()"
-      />
+      <app-chart type="line" [data]="data()" [options]="options" [ariaLabel]="label()" />
     </div>
     <table class="sr-only">
       <caption>

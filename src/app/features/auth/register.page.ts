@@ -8,15 +8,17 @@ import {
   minLength,
   required,
 } from '@angular/forms/signals';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatError, MatFormField, MatHint, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { MessageModule } from 'primeng/message';
-import { PasswordModule } from 'primeng/password';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
 import { errorMessage } from '../../core/http-errors';
-import { FieldErrors } from '../../shared/field-errors';
+import { ErrorMessage } from '../../shared/error-message';
 
 @Component({
   selector: 'app-register-page',
@@ -24,74 +26,92 @@ import { FieldErrors } from '../../shared/field-errors';
     FormRoot,
     FormField,
     RouterLink,
-    ButtonModule,
-    InputTextModule,
-    MessageModule,
-    PasswordModule,
-    FieldErrors,
+    MatButton,
+    MatIconButton,
+    MatCard,
+    MatCardContent,
+    MatError,
+    MatFormField,
+    MatHint,
+    MatLabel,
+    MatSuffix,
+    MatIcon,
+    MatInput,
+    MatProgressSpinner,
+    ErrorMessage,
   ],
   template: `
     <main class="flex min-h-screen items-center justify-center p-4">
-      <div class="w-full max-w-md rounded-xl bg-surface-0 p-8 shadow-sm">
-        <h1 class="mb-6 text-2xl font-semibold">Crear cuenta</h1>
+      <mat-card appearance="outlined" class="w-full max-w-md">
+        <mat-card-content class="!p-8">
+          <h1 class="mb-6 text-2xl font-medium">Crear cuenta</h1>
 
-        <form [formRoot]="registerForm" class="flex flex-col gap-5">
-          @if (serverError(); as serverError) {
-            <p-message severity="error">{{ serverError }}</p-message>
-          }
+          <form [formRoot]="registerForm" class="flex flex-col gap-4">
+            @if (serverError(); as serverError) {
+              <app-error-message>{{ serverError }}</app-error-message>
+            }
 
-          <div class="flex flex-col gap-2">
-            <label for="name" class="font-medium">Nombre</label>
-            <input
-              pInputText
-              id="name"
-              autocomplete="name"
-              aria-describedby="name-error"
-              [formField]="registerForm.name"
-            />
-            <app-field-errors id="name-error" [state]="registerForm.name()" />
-          </div>
+            <mat-form-field>
+              <mat-label>Nombre</mat-label>
+              <input matInput id="name" autocomplete="name" [formField]="registerForm.name" />
+              <mat-error>{{ registerForm.name().errors()[0]?.message }}</mat-error>
+            </mat-form-field>
 
-          <div class="flex flex-col gap-2">
-            <label for="email" class="font-medium">Email</label>
-            <input
-              pInputText
-              id="email"
-              type="email"
-              autocomplete="email"
-              aria-describedby="email-error"
-              [formField]="registerForm.email"
-            />
-            <app-field-errors id="email-error" [state]="registerForm.email()" />
-          </div>
+            <mat-form-field>
+              <mat-label>Email</mat-label>
+              <input
+                matInput
+                id="email"
+                type="email"
+                autocomplete="email"
+                [formField]="registerForm.email"
+              />
+              <mat-error>{{ registerForm.email().errors()[0]?.message }}</mat-error>
+            </mat-form-field>
 
-          <div class="flex flex-col gap-2">
-            <label for="password" class="font-medium">Contraseña</label>
-            <p-password
-              inputId="password"
-              autocomplete="new-password"
-              [feedback]="false"
-              [toggleMask]="true"
-              [fluid]="true"
-              [formField]="registerForm.password"
-            />
-            <small class="text-surface-700">Entre 8 y 72 caracteres.</small>
-            <app-field-errors [state]="registerForm.password()" />
-          </div>
+            <mat-form-field>
+              <mat-label>Contraseña</mat-label>
+              <input
+                matInput
+                id="password"
+                autocomplete="new-password"
+                [type]="showPassword() ? 'text' : 'password'"
+                [formField]="registerForm.password"
+              />
+              <button
+                matIconButton
+                matSuffix
+                type="button"
+                aria-label="Mostrar contraseña"
+                [attr.aria-pressed]="showPassword()"
+                (click)="showPassword.set(!showPassword())"
+              >
+                <mat-icon aria-hidden="true">{{
+                  showPassword() ? 'visibility_off' : 'visibility'
+                }}</mat-icon>
+              </button>
+              <mat-hint>Entre 8 y 72 caracteres.</mat-hint>
+              <mat-error>{{ registerForm.password().errors()[0]?.message }}</mat-error>
+            </mat-form-field>
 
-          <p-button
-            type="submit"
-            label="Crear cuenta"
-            [loading]="registerForm().submitting()"
-            [fluid]="true"
-          />
-        </form>
+            <button
+              matButton="filled"
+              type="submit"
+              class="w-full"
+              [disabled]="registerForm().submitting()"
+              [showProgress]="registerForm().submitting()"
+            >
+              <mat-spinner progressIndicator diameter="20" aria-label="Creando cuenta" />
+              Crear cuenta
+            </button>
+          </form>
 
-        <p class="mt-6 text-sm text-surface-700">
-          ¿Ya tienes cuenta?
-          <a routerLink="/login" class="font-medium text-primary-700 underline">Inicia sesión</a>
-        </p>
-      </div>
+          <p class="mt-6 text-sm text-on-surface-variant">
+            ¿Ya tienes cuenta?
+            <a routerLink="/login" class="font-medium text-primary underline">Inicia sesión</a>
+          </p>
+        </mat-card-content>
+      </mat-card>
     </main>
   `,
 })
@@ -99,6 +119,7 @@ export class RegisterPage {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
+  protected readonly showPassword = signal(false);
   protected readonly serverError = signal<string | null>(null);
   protected readonly registerForm = form(
     signal({ name: '', email: '', password: '' }),

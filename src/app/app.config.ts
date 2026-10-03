@@ -2,12 +2,9 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import Aura from '@primeuix/themes/aura';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { providePrimeNG } from 'primeng/config';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/auth/auth.interceptor';
-import { PRIMENG_LICENSE } from './core/primeng-license';
+import { provideMaterial } from './core/material.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,17 +12,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
-    providePrimeNG({
-      license: PRIMENG_LICENSE,
-      theme: {
-        preset: Aura,
-        options: {
-          darkModeSelector: '.app-dark',
-          cssLayer: { name: 'primeng', order: 'theme, base, primeng, components, utilities' },
-        },
-      },
-    }),
-    MessageService,
-    ConfirmationService,
+    provideMaterial(),
   ],
 };
