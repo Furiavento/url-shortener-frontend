@@ -1,64 +1,55 @@
 import { Component, inject } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatToolbar } from '@angular/material/toolbar';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { SignOut } from '@primeicons/angular/sign-out';
-import { ButtonModule } from 'primeng/button';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToastModule } from 'primeng/toast';
 import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-shell',
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-    ButtonModule,
-    ConfirmDialogModule,
-    ToastModule,
-    SignOut,
-  ],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatButton, MatIcon, MatToolbar],
   template: `
     <a
       href="#main"
-      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-surface-0 focus:p-2"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-surface focus:p-2"
     >
       Saltar al contenido
     </a>
 
-    <header class="border-b border-surface-200 bg-surface-0">
-      <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-4 py-3">
-        <a routerLink="/" class="text-lg font-semibold text-surface-900">Acortador</a>
+    <header class="border-b border-outline-variant">
+      <mat-toolbar class="app-toolbar">
+        <div class="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-4 py-2">
+          <a routerLink="/" class="text-lg font-medium text-on-surface no-underline">Acortador</a>
 
-        <nav aria-label="Principal" class="flex gap-1">
-          @for (link of links; track link.path) {
-            <a
-              [routerLink]="link.path"
-              routerLinkActive="bg-primary-50 text-primary-800"
-              ariaCurrentWhenActive="page"
-              [routerLinkActiveOptions]="{ exact: link.exact }"
-              class="rounded-md px-3 py-2 font-medium text-surface-700 hover:bg-surface-100"
-            >
-              {{ link.label }}
-            </a>
-          }
-        </nav>
+          <nav aria-label="Principal" class="flex gap-1">
+            @for (link of links; track link.path) {
+              <a
+                [matButton]="active.isActive ? 'tonal' : 'text'"
+                [routerLink]="link.path"
+                routerLinkActive
+                #active="routerLinkActive"
+                ariaCurrentWhenActive="page"
+                [routerLinkActiveOptions]="{ exact: link.exact }"
+              >
+                {{ link.label }}
+              </a>
+            }
+          </nav>
 
-        <div class="ml-auto flex items-center gap-3">
-          <span class="text-sm text-surface-700">{{ auth.user()?.name }}</span>
-          <button pButton type="button" [text]="true" severity="secondary" (click)="logout()">
-            <svg data-p-icon="sign-out" aria-hidden="true" [size]="16"></svg>
-            Cerrar sesión
-          </button>
+          <div class="ml-auto flex items-center gap-3">
+            <span class="text-sm text-on-surface-variant">{{ auth.user()?.name }}</span>
+            <button matButton type="button" (click)="logout()">
+              <mat-icon aria-hidden="true">logout</mat-icon>
+              Cerrar sesión
+            </button>
+          </div>
         </div>
-      </div>
+      </mat-toolbar>
     </header>
 
     <main id="main" tabindex="-1" class="mx-auto max-w-6xl px-4 py-8 outline-none">
       <router-outlet />
     </main>
-
-    <p-toast />
-    <p-confirmdialog />
   `,
 })
 export class Shell {

@@ -1,4 +1,4 @@
-// Aura's default primary (emerald) and surface tones, readable on a white background.
-export const CHART_PRIMARY = '#059669';
-export const CHART_PRIMARY_FILL = 'rgba(5, 150, 105, 0.15)';
-export const CHART_GRID = '#e2e8f0';
+// `mat.$green-palette` tones: primary 40 (the theme's light primary) and neutral-variant 80.
+export const CHART_PRIMARY = '#026e00';
+export const CHART_PRIMARY_FILL = 'rgba(2, 110, 0, 0.15)';
+export const CHART_GRID = '#c3c8bc';

@@ -1,6 +1,6 @@
 # URL Shortener: frontend
 
-Dashboard en Angular 22 + PrimeNG para la API de [url-shortener-backend](https://github.com/Furiavento/url-shortener-backend): registro e inicio de sesión, gestión de URLs cortas y estadísticas de clics.
+Dashboard en Angular 22 + Angular Material para la API de [url-shortener-backend](https://github.com/Furiavento/url-shortener-backend): registro e inicio de sesión, gestión de URLs cortas y estadísticas de clics.
 
 ## Puesta en marcha
 
@@ -26,7 +26,7 @@ En desarrollo la app llama a `http://localhost:3000`. El backend ya admite ese o
 
 - `src/app/core/`: configuración de la API, modelos del OpenAPI, servicios HTTP y autenticación (servicio, interceptor y guards).
 - `src/app/features/`: páginas: login, registro, layout, dashboard, lista de URLs y detalle con estadísticas.
-- `src/app/shared/`: componentes reutilizables (gráficos con tabla accesible, errores de formulario).
+- `src/app/shared/`: componentes reutilizables (gráficos con tabla accesible, mensajes de error, diálogo de confirmación).
 
 ### Autenticación
 
@@ -39,10 +39,6 @@ En desarrollo la app llama a `http://localhost:3000`. El backend ya admite ese o
 
 - `/login` y `/register` se prerenderizan en el build.
 - El resto de rutas se renderiza en el navegador, porque necesitan el token, que solo existe en memoria del cliente.
-
-## Licencia de PrimeNG
-
-PrimeNG 22 usa la PrimeUI License y pide una key; la licencia Community es gratuita para desarrolladores individuales. Pégala en `src/app/core/primeng-license.ts`. Sin key, la app funciona igual pero muestra un aviso de licencia.
 
 ## Producción
 

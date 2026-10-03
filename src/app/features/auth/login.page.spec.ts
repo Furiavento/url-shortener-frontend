@@ -43,7 +43,7 @@ describe('LoginPage', () => {
     backend.expectNone(`${API}/api/auth/login`);
   });
 
-  it('logs in with the values typed in the PrimeNG inputs', async () => {
+  it('logs in with the values typed in the Material inputs', async () => {
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     const { type, submit } = await render();
     await type('#email', 'demo@example.com');
